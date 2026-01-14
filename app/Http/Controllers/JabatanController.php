@@ -50,7 +50,6 @@ class JabatanController extends Controller
    */
   public function store(Request $request)
   {
-    // GANTI $this->validate dengan $request->validate
     $request->validate([
       'nama_jabatan'       => 'required',
       'gapok_jabatan'      => 'required|numeric',
@@ -77,7 +76,6 @@ class JabatanController extends Controller
    */
   public function update(Request $request, Jabatan $jabatan)
   {
-    // GANTI $this->validate dengan $request->validate
     $request->validate([
       'nama_jabatan'       => 'required',
       'gapok_jabatan'      => 'required|numeric',
