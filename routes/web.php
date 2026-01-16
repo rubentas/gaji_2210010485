@@ -6,16 +6,15 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\JabatanController;
+use App\Http\Controllers\JabatanKaryawanController; // TAMBAH INI
 
-Route::get('/', function () {
-  return view('welcome');
-});
+// Redirect root ke login
+Route::redirect('/', '/login');
 
 /*
 |--------------------------------------------------------------------------
 | AUTH ROUTES
 |--------------------------------------------------------------------------
-| Laravel 11 / 12 (manual auth)
 */
 Route::middleware('guest')->group(function () {
   Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
@@ -48,4 +47,10 @@ Route::group([
   Route::resource('jabatan', JabatanController::class);
   Route::get('get-jabatan', [JabatanController::class, 'getJabatan'])
     ->name('get.jabatan');
+
+  Route::get('print-pdf', [JabatanController::class, 'printPdf'])->name('print.jabatan');
+  Route::get('grafik-jabatan', [JabatanController::class, 'grafikJabatan'])->name('grafik.jabatan');
+  Route::get('get-grafik', [JabatanController::class, 'getGrafik'])->name('get.grafik.jabatan');
+  Route::get('export-excel', [JabatanController::class, 'exportExcel'])->name('export.excel');
+  Route::resource('jabatan-karyawan', JabatanKaryawanController::class);
 });

@@ -15,6 +15,15 @@
         <div class="card-header">
           <h2 class="card-title"><strong>Table Data Jabatan</strong></h2>
           <a href="{{ route('jabatan.create') }}" class="btn btn-primary btn-md float-right"> Tambah Jabatan</a>
+          <a href="{{ route('print.jabatan') }}" target="_blank" class="btn btn-success btn-md">
+            <i class="fa fa-print"></i> Cetak Jabatan
+          </a>
+          <a href="{{ route('grafik.jabatan') }}" class="btn btn-danger btn-md">
+            <i class="fa fa-chart-bar"></i> Grafik Jabatan
+          </a>
+          <a href="{{ route('export.excel') }}" class="btn btn-info btn-md">
+            <i class="fa fa-file-excel"></i> Export Excel
+          </a>
         </div>
 
         <div class="card-body">

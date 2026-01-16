@@ -8,35 +8,45 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    // HAPUS CONSTRUCTOR INI SEMUA ↓↓↓
-    // public function __construct()
-    // {
-    //     $this->middleware('guest')->except('logout');
-    //     $this->middleware('auth')->only('logout');
-    // }
-    
-    public function showLoginForm()
-    {
-        return view('auth.login');
+  /**
+   * Handle an incoming authentication request.
+   */
+  public function login(Request $request)
+  {
+    $credentials = $request->validate([
+      'email' => ['required', 'email'],
+      'password' => ['required'],
+    ]);
+
+    if (Auth::attempt($credentials)) {
+      $request->session()->regenerate();
+
+      // REDIRECT KE ADMIN/HOME SETELAH LOGIN
+      return redirect()->intended('/admin/home');
     }
 
-    public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
-        ]);
+    return back()->withErrors([
+      'email' => 'The provided credentials do not match our records.',
+    ]);
+  }
 
-        if (Auth::attempt($credentials)) {
-            return redirect('/home');
-        }
+  /**
+   * Log the user out of the application.
+   */
+  public function logout(Request $request)
+  {
+    Auth::logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
 
-        return back()->withErrors(['email' => 'Login failed']);
-    }
+    return redirect('/');
+  }
 
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        return redirect('/');
-    }
+  /**
+   * Display the login view.
+   */
+  public function showLoginForm()
+  {
+    return view('auth.login');
+  }
 }

@@ -58,4 +58,9 @@
               <button type="submit" class="btn btn-info" id="simpan">SIMPAN</button>
               <a href="{{ route('jabatan.index') }}" class="btn btn-danger">BATAL</a>
             </div>
-            </
+          </form> <!-- TAMBAH INI -->
+        </div>
+      </div>
+    </div>
+  </div>
+@stop

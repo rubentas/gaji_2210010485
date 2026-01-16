@@ -1,5 +1,5 @@
 <div class="btn-group" role="group">
-  <form action="{{ route('jabatan.destroy', $form_url) }}" method="post" class="form-inline">
+  <form action="{{ $form_url }}" method="post" class="form-inline">
     @method('DELETE')
     @csrf
     <a class="btn btn-sm btn-warning" href="{{ $edit_url }}"><i class="fa fa-edit"></i> Edit</a> &nbsp;

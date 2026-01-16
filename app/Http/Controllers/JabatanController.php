@@ -4,10 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Jabatan;
 use Illuminate\Http\Request;
-use Session;
-use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 use RealRashid\SweetAlert\Facades\Alert;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class JabatanController extends Controller
 {
@@ -19,19 +18,23 @@ class JabatanController extends Controller
     return view('masterdata.jabatan.index');
   }
 
+  /**
+   * Data Jabatan untuk DataTables (AJAX)
+   */
   public function getJabatan(Request $request)
   {
     if ($request->ajax()) {
-      $jabatan = Jabatan::all();
+      $jabatan = Jabatan::query();
+
       return DataTables::of($jabatan)
-        ->editColumn('aksi', function ($jabatan) {
+        ->addIndexColumn()
+        ->addColumn('aksi', function ($jabatan) {
           return view('partials._action', [
-            'model' => $jabatan,
+            'model'    => $jabatan,
             'form_url' => route('jabatan.destroy', $jabatan->id),
             'edit_url' => route('jabatan.edit', $jabatan->id),
           ]);
         })
-        ->addIndexColumn()
         ->rawColumns(['aksi'])
         ->make(true);
     }
@@ -50,19 +53,19 @@ class JabatanController extends Controller
    */
   public function store(Request $request)
   {
-    $request->validate([
-      'nama_jabatan'       => 'required',
+    $validated = $request->validate([
+      'nama_jabatan'       => 'required|string|max:255',
       'gapok_jabatan'      => 'required|numeric',
       'tunjangan_jabatan'  => 'required|numeric',
       'uang_makan_perhari' => 'required|numeric',
     ]);
 
-    // insert data ke database
-    Jabatan::create($request->all());
+    Jabatan::create($validated);
 
     Alert::success('Sukses', 'Berhasil Menambahkan Jabatan Baru');
     return redirect()->route('jabatan.index');
   }
+
   /**
    * Show the form for editing the specified resource.
    */
@@ -76,15 +79,14 @@ class JabatanController extends Controller
    */
   public function update(Request $request, Jabatan $jabatan)
   {
-    $request->validate([
-      'nama_jabatan'       => 'required',
+    $validated = $request->validate([
+      'nama_jabatan'       => 'required|string|max:255',
       'gapok_jabatan'      => 'required|numeric',
       'tunjangan_jabatan'  => 'required|numeric',
       'uang_makan_perhari' => 'required|numeric',
     ]);
 
-    // update data ke database
-    $jabatan->update($request->all());
+    $jabatan->update($validated);
 
     Alert::success('Sukses', 'Berhasil Mengupdate Jabatan');
     return redirect()->route('jabatan.index');
@@ -96,7 +98,51 @@ class JabatanController extends Controller
   public function destroy(Jabatan $jabatan)
   {
     $jabatan->delete();
+
     Alert::success('Sukses', 'Berhasil Menghapus Jabatan');
     return redirect()->route('jabatan.index');
+  }
+
+  /**
+   * Cetak data jabatan dalam format PDF
+   */
+  public function printPdf()
+  {
+    $jabatan = Jabatan::all();
+
+    $pdf = Pdf::loadView('masterdata.jabatan._pdf', [
+      'jabatan' => $jabatan
+    ])->setPaper('A4', 'landscape');
+    return $pdf->stream('Data_Jabatan.pdf');
+  }
+
+  /**
+   * Menampilkan halaman grafik jabatan
+   */
+  public function grafikJabatan()
+  {
+    return view('masterdata.jabatan.chart');
+  }
+
+  /**
+   * Mendapatkan data grafik (JSON)
+   */
+  public function getGrafik()
+  {
+    $jabatan = Jabatan::select('nama_jabatan', 'gapok_jabatan')->get();
+
+    return response()->json([
+      'data' => $jabatan
+    ]);
+  }
+
+  /**
+   * Export data jabatan ke Excel
+   */
+  public function exportExcel()
+  {
+    $jabatan = Jabatan::all();
+
+    return view('masterdata.jabatan._excel', compact('jabatan'));
   }
 }

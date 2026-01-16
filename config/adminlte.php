@@ -322,6 +322,11 @@ return [
       'icon' => 'fas fa-fw fa-star',
     ],
     [
+      'text' => 'Jabatan Karyawan',
+      'route' => 'jabatan-karyawan.index',
+      'icon' => 'fas fa-fw fa-users-cog',
+    ],
+    [
       'text' => 'Pengguna',
       'route' => 'pengguna.index',
       'icon' => 'fas fa-fw fa-user',
